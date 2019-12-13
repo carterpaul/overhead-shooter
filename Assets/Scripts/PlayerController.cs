@@ -12,6 +12,10 @@ public class PlayerController : MonoBehaviour
     public float slowdown_factor;
     public Slider charge_slider;
     public Rigidbody2D projectile;
+    public Sprite right_sprite;
+    public Sprite up_sprite;
+    public Sprite left_sprite;
+    public Sprite down_sprite;
     private Rigidbody2D rb;
     private float charge_level;
     private bool last_frame_pressed;
@@ -31,9 +35,15 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         // Update object's rotation to face cursor
-        Vector2 cursor = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        float angle = Mathf.Atan2(cursor.y - rb.position.y, cursor.x - rb.position.x) * Mathf.Rad2Deg;
-        rb.rotation = angle;
+        float angle = getAngleToCursor();
+        if (angle > -45 & angle <= 45)
+            GetComponent<SpriteRenderer>().sprite = right_sprite;
+        else if (angle > 45 & angle <= 135)
+            GetComponent<SpriteRenderer>().sprite = up_sprite;
+        else if (angle <= -45 & angle > -135)
+            GetComponent<SpriteRenderer>().sprite = down_sprite;
+        else
+            GetComponent<SpriteRenderer>().sprite = left_sprite;
 
         // Fire if the button is released and cooldown has passed
         if  (charge_level > shot_cooldown & last_frame_pressed == true & !Input.GetButton("Fire1"))
@@ -75,9 +85,16 @@ public class PlayerController : MonoBehaviour
 
     void Shoot()
     {
-        Rigidbody2D p = Instantiate(projectile, rb.transform.position, rb.transform.rotation);
+        Rigidbody2D p = Instantiate(projectile, rb.transform.position,
+            Quaternion.Euler(0, 0, getAngleToCursor()));
         Vector2 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (target - rb.position).normalized;
         p.AddForce(direction * (projectile_speed * charge_level) + rb.velocity);
+    }
+
+    float getAngleToCursor()
+    {
+        Vector2 cursor = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        return Mathf.Atan2(cursor.y - rb.position.y, cursor.x - rb.position.x) * Mathf.Rad2Deg;
     }
 }
