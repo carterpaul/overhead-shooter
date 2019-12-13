@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public float shot_cooldown;
     public float charge_speed;
     public float slowdown_factor;
+    public Slider charge_slider;
     public Rigidbody2D projectile;
     private Rigidbody2D rb;
     private float charge_level;
@@ -22,6 +24,8 @@ public class PlayerController : MonoBehaviour
         charge_level = 0;
         last_frame_pressed = false;
         movement_speed = speed;
+
+        charge_slider.value = 0;
     }
 
     void Update()
@@ -53,7 +57,10 @@ public class PlayerController : MonoBehaviour
         {
             last_frame_pressed = false;
             movement_speed = speed;
+            charge_level = 0;
         }
+
+        charge_slider.value = charge_level;
     }
 
     void FixedUpdate()
