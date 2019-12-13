@@ -6,31 +6,54 @@ public class PlayerController : MonoBehaviour
 {
     public float speed;
     public float projectile_speed;
-    public float cooldown;
+    public float shot_cooldown;
+    public float charge_speed;
+    public float slowdown_factor;
     public Rigidbody2D projectile;
     private Rigidbody2D rb;
-    private float last_shot;
+    private float charge_level;
+    private bool last_frame_pressed;
+    private float movement_speed;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        last_shot = -10f;
+        charge_level = 0;
+        last_frame_pressed = false;
+        movement_speed = speed;
     }
 
     void Update()
     {
-        // Fire if cooldown period has passed
-        if (Input.GetButton("Fire1") & Time.time - last_shot > cooldown)
-        {
-            Shoot();
-            last_shot = Time.time;
-        }
-
         // Update object's rotation to face cursor
         Vector2 cursor = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         float angle = Mathf.Atan2(cursor.y - rb.position.y, cursor.x - rb.position.x) * Mathf.Rad2Deg;
         rb.rotation = angle;
+
+        // Fire if the button is released and cooldown has passed
+        if  (charge_level > shot_cooldown & last_frame_pressed == true & !Input.GetButton("Fire1"))
+        {
+            Shoot();
+            charge_level = 0;
+        }
+
+        // Keep track of if the fire button was held during this frame
+        if (Input.GetButton("Fire1"))
+        {
+            if (charge_level + charge_speed < 1.0f)
+                charge_level += charge_speed;
+            else
+                charge_level = 1.0f;
+
+            movement_speed = speed * slowdown_factor;
+            last_frame_pressed = true;
+        }
+        else
+        {
+            last_frame_pressed = false;
+            movement_speed = speed;
+        }
     }
 
     void FixedUpdate()
@@ -40,7 +63,7 @@ public class PlayerController : MonoBehaviour
 
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
 
-        rb.MovePosition(movement * speed + rb.position);
+        rb.MovePosition(movement * movement_speed + rb.position);
     }
 
     void Shoot()
@@ -48,6 +71,6 @@ public class PlayerController : MonoBehaviour
         Rigidbody2D p = Instantiate(projectile, rb.transform.position, rb.transform.rotation);
         Vector2 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (target - rb.position).normalized;
-        p.AddForce((direction * projectile_speed) + rb.velocity);
+        p.AddForce(direction * (projectile_speed * charge_level) + rb.velocity);
     }
 }

@@ -675,6 +675,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.1
+  projectile_speed: 1000
+  cooldown: 0.2
+  projectile: {fileID: 4010788719099695352, guid: 6c92f17a9144b904b997fd54d2dcec19,
+    type: 3}
 --- !u!61 &1375459747
 BoxCollider2D:
   m_ObjectHideFlags: 0
