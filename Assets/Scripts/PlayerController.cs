@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviourPun
 {
     public float speed;
     public float projectile_speed;
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public Sprite up_sprite;
     public Sprite left_sprite;
     public Sprite down_sprite;
+    public static GameObject LocalPlayerInstance;
     private Rigidbody2D rb;
     private float charge_level;
     private bool last_frame_pressed;
@@ -32,8 +34,26 @@ public class PlayerController : MonoBehaviour
         charge_slider.value = 0;
     }
 
+    void Awake()
+    {
+        // #Important
+        // used in GameManager.cs: we keep track of the localPlayer instance to prevent instantiation when levels are synchronized
+        if (photonView.IsMine)
+        {
+            PlayerController.LocalPlayerInstance = this.gameObject;
+        }
+        // #Critical
+        // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
+        DontDestroyOnLoad(this.gameObject);
+    }
+
     void Update()
     {
+        // Don't control characters that aren't my own
+        if (!photonView.IsMine && PhotonNetwork.IsConnected){
+            return;
+        }
+
         // Update object's rotation to face cursor
         float angle = getAngleToCursor();
         if (angle > -45 & angle <= 45)
