@@ -11,27 +11,35 @@ public class PlayerController : MonoBehaviourPun
     public float shot_cooldown;
     public float charge_speed;
     public float slowdown_factor;
-    public Slider charge_slider;
-    public Rigidbody2D projectile;
+    public GameObject PlayerUiPrefab;
+    public GameObject projectile;
     public Sprite right_sprite;
     public Sprite up_sprite;
     public Sprite left_sprite;
     public Sprite down_sprite;
     public static GameObject LocalPlayerInstance;
-    private Rigidbody2D rb;
-    private float charge_level;
+    public float charge_level;
+    public float health = 1f;
     private bool last_frame_pressed;
     private float movement_speed;
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
         charge_level = 0;
         last_frame_pressed = false;
         movement_speed = speed;
 
-        charge_slider.value = 0;
+        if (PlayerUiPrefab != null)
+        {
+            GameObject _uiGo =  Instantiate(PlayerUiPrefab);
+            _uiGo.SendMessage ("SetTarget", this, SendMessageOptions.RequireReceiver);
+        }
+        else
+        {
+            Debug.LogWarning("<Color=Red><a>Missing</a></Color> PlayerUiPrefab reference on player Prefab.", this);
+        }
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void Awake()
@@ -53,6 +61,12 @@ public class PlayerController : MonoBehaviourPun
         if (!photonView.IsMine && PhotonNetwork.IsConnected){
             return;
         }
+
+        if (health <= 0f)
+        {
+            GameManager.Instance.LeaveRoom();
+        }
+
 
         // Update object's rotation to face cursor
         float angle = getAngleToCursor();
@@ -90,31 +104,60 @@ public class PlayerController : MonoBehaviourPun
             charge_level = 0;
         }
 
-        charge_slider.value = charge_level;
-    }
-
-    void FixedUpdate()
-    {
+        // move the player
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
+        Vector3 movement = new Vector3(moveHorizontal, moveVertical, 0);
 
-        rb.MovePosition(movement * movement_speed + rb.position);
+        LocalPlayerInstance.transform.position = movement * movement_speed * Time.deltaTime + LocalPlayerInstance.transform.position;
     }
 
     void Shoot()
     {
-        Rigidbody2D p = Instantiate(projectile, rb.transform.position,
-            Quaternion.Euler(0, 0, getAngleToCursor()));
-        Vector2 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (target - rb.position).normalized;
-        p.AddForce(direction * (projectile_speed * charge_level) + rb.velocity);
+        GameObject p = PhotonNetwork.Instantiate(this.projectile.name, LocalPlayerInstance.transform.position, Quaternion.Euler(0, 0, getAngleToCursor()));
+        Vector3 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        target = new Vector3(target.x, target.y, 0.0f); // get rid of weirdness in the z dimension before normalizing
+        Vector3 direction = Vector3.Normalize(target - LocalPlayerInstance.transform.position);
+        Rigidbody2D rb = p.GetComponent<Rigidbody2D>();
+        rb.AddForce(direction * (projectile_speed * charge_level));
     }
 
     float getAngleToCursor()
     {
         Vector2 cursor = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        return Mathf.Atan2(cursor.y - rb.position.y, cursor.x - rb.position.x) * Mathf.Rad2Deg;
+        return Mathf.Atan2(cursor.y - LocalPlayerInstance.transform.position.y, cursor.x - LocalPlayerInstance.transform.position.x) * Mathf.Rad2Deg;
+    }
+
+    //PUN callbacks
+    void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadingMode)
+    {
+        GameObject _uiGo = Instantiate(this.PlayerUiPrefab);
+        _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
+    }
+
+    public void OnDisable()
+    {
+        // Always call the base to remove callbacks
+        //base.OnDisable ();
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (!photonView.IsMine)
+        {
+            Debug.Log("!photonView.IsMine");
+            return;
+        }
+        // We are only interested in Beamers
+        // we should be using tags but for the sake of distribution, let's simply check by name.
+        if (!other.name.Contains("Projectile"))
+        {
+            Debug.Log("wrong collider");
+            return;
+        }
+        health -= 0.1f;
+        Debug.Log("Trigger entered, health: " + health);
     }
 }

@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class ProjectileController : MonoBehaviour
+public class ProjectileController : MonoBehaviourPun
 {
+    public float x_limit;
+    public float y_limit;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,9 +16,8 @@ public class ProjectileController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector2 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
-        if (screenPosition.y > Screen.height || screenPosition.y < 0 
-            || screenPosition.x > Screen.width || screenPosition.x < 0)
-        Destroy(this.gameObject);
+        Vector3 p = gameObject.transform.position;
+        if (p.y > x_limit || p.y < -x_limit || p.x > y_limit || p.x < -y_limit)
+        PhotonNetwork.Destroy(this.gameObject);
     }
 }

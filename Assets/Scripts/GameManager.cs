@@ -9,12 +9,13 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 
-
 public class GameManager : MonoBehaviourPunCallbacks
 {
 
     [Tooltip("The prefab to use for representing the player")]
     public GameObject playerPrefab;
+
+    public static GameManager Instance;
 
     // Called when the local player left the room. We need to load the launcher scene.
     public override void OnLeftRoom()
@@ -29,6 +30,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        Instance = this;
+
         if (playerPrefab == null)
         {
             Debug.LogError("<Color=Red><a>Missing</a></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'",this);
