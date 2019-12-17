@@ -17,9 +17,6 @@ ScriptsOnlyBuild:
     - Photon.Pun.Demo.PunBasics.PlayerUI
     - Photon.Pun.Demo.SlotRacer.PlayerControl
     - Photon.Pun.Demo.SlotRacer.Utils.SplineWalker
-    PhotonUnityNetworking.Editor.dll:
-    - Photon.Pun.PhotonTransformViewEditor
-    - Photon.Pun.PhotonViewInspector
     PhotonUnityNetworking.dll:
     - Photon.Pun.PhotonAnimatorView
     - Photon.Pun.PhotonRigidbodyView
@@ -1250,7 +1247,7 @@ ScriptsOnlyBuild:
     className: ProceduralController
   - hash:
       serializedVersion: 2
-      Hash: 819753cb4a028568afbbe2523a89ee17
+      Hash: 61ef88c8ae18fd72adb0bf8c56e95b5d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerUI
@@ -1514,7 +1511,7 @@ ScriptsOnlyBuild:
     className: BoolInputField
   - hash:
       serializedVersion: 2
-      Hash: 9549f3f840d25c34b5ccb56ac0017f4f
+      Hash: 6bc1de87730f684d1295efd26f9fdf86
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ProjectileController

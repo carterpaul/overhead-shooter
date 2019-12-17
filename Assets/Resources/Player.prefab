@@ -13,9 +13,8 @@ GameObject:
   - component: {fileID: 6431884402724308503}
   - component: {fileID: -3887007389231129754}
   - component: {fileID: 1722702873129489337}
-  - component: {fileID: -3871698612365405683}
-  - component: {fileID: 5044137150410888888}
   - component: {fileID: -6125337747428592902}
+  - component: {fileID: -463261240367912248}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -99,10 +98,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 8
-  projectile_speed: 2000
+  projectile_speed: 1600
   shot_cooldown: 0.3
   charge_speed: 0.03
-  slowdown_factor: 0.5
+  slowdown_factor: 0.66
   PlayerUiPrefab: {fileID: 8922168666399391464, guid: 424974f0454a3534295f86134a1029dc,
     type: 3}
   projectile: {fileID: 438573356067975397, guid: 6c92f17a9144b904b997fd54d2dcec19,
@@ -132,6 +131,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 1722702873129489337}
+  - {fileID: 6431884402724308503}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -150,28 +150,7 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 0
   m_SynchronizeScale: 0
---- !u!50 &-3871698612365405683
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6431884402724308520}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 1
-  m_Constraints: 0
---- !u!61 &5044137150410888888
+--- !u!61 &-6125337747428592902
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -197,29 +176,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.4, y: 1.6}
   m_EdgeRadius: 0
---- !u!61 &-6125337747428592902
-BoxCollider2D:
+--- !u!50 &-463261240367912248
+Rigidbody2D:
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6431884402724308520}
-  m_Enabled: 1
-  m_Density: 1
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.4, y: 1.6}
-    newSize: {x: 0.08, y: 0.08}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.4, y: 1.6}
-  m_EdgeRadius: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

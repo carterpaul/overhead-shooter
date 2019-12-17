@@ -14,6 +14,7 @@ public class PlayerUI : MonoBehaviour
     [SerializeField]
     private Slider chargeSlider;
     
+    [SerializeField]
     private Slider healthSlider;
 
     [Tooltip("Pixel offset from the player target")]

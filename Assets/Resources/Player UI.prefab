@@ -343,7 +343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.49056602, g: 0.49056602, b: 0.49056602, a: 1}
+  m_Color: {r: 0.8867924, g: 0.23843002, b: 0.23843002, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -678,4 +678,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerNameText: {fileID: 7144779796608626880}
   chargeSlider: {fileID: 1430794999606080207}
+  healthSlider: {fileID: 7779905197440753433}
   screenOffset: {x: 0, y: 50, z: 0}

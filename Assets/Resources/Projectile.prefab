@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2327319891460783008}
   - component: {fileID: -8913925425203953180}
   - component: {fileID: -4592952514698618230}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,6 +71,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   x_limit: 8
   y_limit: 16
+  ID: 0
 --- !u!212 &-6777519294367900719
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -167,7 +168,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

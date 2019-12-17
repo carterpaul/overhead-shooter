@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
-public class PlayerController : MonoBehaviourPun
+public class PlayerController : MonoBehaviourPun, IPunObservable
 {
     public float speed;
     public float projectile_speed;
@@ -22,10 +22,14 @@ public class PlayerController : MonoBehaviourPun
     public float health = 1f;
     private bool last_frame_pressed;
     private float movement_speed;
+    private int ID;
 
     // Start is called before the first frame update
     void Start()
     {
+        System.Random rnd = new System.Random();
+        ID = rnd.Next(65536);
+
         charge_level = 0;
         last_frame_pressed = false;
         movement_speed = speed;
@@ -115,7 +119,10 @@ public class PlayerController : MonoBehaviourPun
 
     void Shoot()
     {
-        GameObject p = PhotonNetwork.Instantiate(this.projectile.name, LocalPlayerInstance.transform.position, Quaternion.Euler(0, 0, getAngleToCursor()));
+        object[] initData = {ID};
+        print("initData: " + initData);
+        GameObject p = PhotonNetwork.Instantiate(this.projectile.name, LocalPlayerInstance.transform.position,
+                        Quaternion.Euler(0, 0, getAngleToCursor()), data: initData);
         Vector3 target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         target = new Vector3(target.x, target.y, 0.0f); // get rid of weirdness in the z dimension before normalizing
         Vector3 direction = Vector3.Normalize(target - LocalPlayerInstance.transform.position);
@@ -143,21 +150,38 @@ public class PlayerController : MonoBehaviourPun
         UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (!photonView.IsMine)
         {
-            Debug.Log("!photonView.IsMine");
             return;
         }
         // We are only interested in Beamers
         // we should be using tags but for the sake of distribution, let's simply check by name.
         if (!other.name.Contains("Projectile"))
         {
-            Debug.Log("wrong collider");
             return;
         }
-        health -= 0.1f;
+        int otherID = other.gameObject.GetComponent<ProjectileController>().ID;
+        if (otherID != ID){
+            health -= 0.1f;
+        }
         Debug.Log("Trigger entered, health: " + health);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // We own this player: send the others our data
+            stream.SendNext(charge_level);
+            stream.SendNext(health);
+        }
+        else
+        {
+            // Network player, receive data
+            this.charge_level = (float)stream.ReceiveNext();
+            this.health = (float)stream.ReceiveNext();
+        }
     }
 }
